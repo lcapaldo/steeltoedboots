@@ -100,6 +100,13 @@ module Shoes
       @wcontext.add_widget(panel)
     end
 
+    def image(uri)
+      bimg = System::Windows::Media::Imaging::BitmapImage.new(System::Uri.new(uri))
+      img = System::Windows::Controls::Image.new
+      img.Source = bimg
+
+      @wcontext.add_widget(img)
+    end
   end
 def self.app(props = {}, &block)
   inst = Instance.new(props)
