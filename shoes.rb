@@ -46,6 +46,12 @@ module Shoes
     def alert(msg)
       System::Windows::MessageBox.Show(@win, msg, "Shoes says")
     end
+    def every(seconds, &block)
+      timer = System::Windows::Threading::DispatcherTimer.new
+      timer.tick { |s, e| block.call }
+      timer.Interval = System::TimeSpan.new(0,0,seconds)
+      timer.Start()
+    end
   end
 def self.app(props = {}, &block)
   inst = Instance.new(props)
