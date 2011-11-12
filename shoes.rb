@@ -5,8 +5,8 @@ require 'PresentationCore'
 module Shoes
   class Instance
     def initialize(props)
-      @width = props[:width]
-      @height = props[:height]
+      @width = props[:width] if props and props.has_key? :width
+      @height = props[:height] if props and props.has_key? :height
       
       @win = System::Windows::Window.new
       @win.Width = @width
@@ -36,7 +36,4 @@ def self.app(props, &block)
 end
 end
 
-Shoes.app :width => 300, :height => 300 do
-button("Click me!") { alert("Hello, world!") }
-end
-
+load ARGV[0]
