@@ -43,6 +43,16 @@ module Shoes
       @w.Content = w
     end
   end
+
+  class StackPanelWrapper
+    def initialize(p)
+      @p = p
+    end
+
+    def add_widget(w)
+      @p.Children.Add(w)
+    end
+  end
       
   class Instance
     def initialize(props)
@@ -80,6 +90,14 @@ module Shoes
       timer.tick { |s, e| block.call }
       timer.Interval = System::TimeSpan.new(0,0,seconds)
       timer.Start()
+    end
+
+    def stack(&block)
+      panel = System::Windows::Controls::StackPanel.new
+      @wcontext.push(StackPanelWrapper.new(panel))
+      instance_eval(&block)
+      @wcontext.pop
+      @wcontext.add_widget(panel)
     end
 
   end
