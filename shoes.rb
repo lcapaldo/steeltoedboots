@@ -3,14 +3,27 @@ require 'PresentationFramework'
 require 'PresentationCore'
 
 module Shoes
+  class TitleWrapper
+    attr_accessor :label
+    def initialize(content)
+      lbl = System::Windows::Controls::Label.new 
+      lbl.Content = content
+      self.label = lbl
+    end
+    public
+    def replace(newcontent)
+      self.label.Content = newcontent
+    end
+  end
+      
   class Instance
     def initialize(props)
-      @width = props[:width] if props and props.has_key? :width
-      @height = props[:height] if props and props.has_key? :height
+      width = props[:width] if props and props.has_key? :width
+      height = props[:height] if props and props.has_key? :height
       
       @win = System::Windows::Window.new
-      @win.Width = @width
-      @win.Height = @height
+      @win.Width = width if width
+      @win.Height = height if height
     end
     public  
     def runloop
@@ -25,11 +38,16 @@ module Shoes
         but.AddHandler(System::Windows::Controls::Primitives::ButtonBase::click_event, System::Windows::RoutedEventHandler.new { |o, e| clickhandler.call })
       end
     end
+    def title(content)
+      r = TitleWrapper.new(content)
+      @win.Content = r.label
+      r
+    end  
     def alert(msg)
       System::Windows::MessageBox.Show(@win, msg, "Shoes says")
     end
   end
-def self.app(props, &block)
+def self.app(props = {}, &block)
   inst = Instance.new(props)
   inst.instance_eval(&block)
   inst.runloop
