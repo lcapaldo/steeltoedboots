@@ -45,12 +45,16 @@ module Shoes
   end
 
   class PanelWrapper
-    def initialize(p)
+    def initialize(p, app)
       @p = p
+      @app = app
     end
 
     def add_widget(w)
       @p.Children.Add(w)
+    end
+    def append(&block)
+      @app.with_exist_ctx(self, &block)
     end
   end
 
@@ -79,7 +83,7 @@ module Shoes
       @wcontext = WidgetContext.new(WindowWrapper.new(@win))
       wrappanel = System::Windows::Controls::WrapPanel.new
       @wcontext.add_widget(wrappanel)
-      @wcontext.push(PanelWrapper.new(wrappanel))
+      @wcontext.push(PanelWrapper.new(wrappanel, self))
     end
     public  
     def runloop
@@ -108,15 +112,21 @@ module Shoes
       timer.Interval = System::TimeSpan.new(0,0,seconds)
       timer.Start()
     end
-
-    def with_ctx(obj, wrapper, &block)
+    
+    def with_exist_ctx(wrapper, &block)
       @wcontext.push(wrapper)
       instance_eval(&block)
       @wcontext.pop
+      wrapper
+    end
+      
+    def with_ctx(obj, wrapper, &block)
+      with_exist_ctx(wrapper, &block)
       @wcontext.add_widget(obj)
+      wrapper
     end
     def with_panel(obj, &block)
-      with_ctx(obj, PanelWrapper.new(obj), &block)
+      with_ctx(obj, PanelWrapper.new(obj, self), &block)
     end
     def stack(&block)
       panel = System::Windows::Controls::StackPanel.new
