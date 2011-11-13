@@ -44,7 +44,7 @@ module Shoes
     end
   end
 
-  class StackPanelWrapper
+  class PanelWrapper
     def initialize(p)
       @p = p
     end
@@ -94,7 +94,7 @@ module Shoes
 
     def stack(&block)
       panel = System::Windows::Controls::StackPanel.new
-      @wcontext.push(StackPanelWrapper.new(panel))
+      @wcontext.push(PanelWrapper.new(panel))
       instance_eval(&block)
       @wcontext.pop
       @wcontext.add_widget(panel)
