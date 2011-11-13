@@ -63,6 +63,9 @@ module Shoes
       @win.Width = width if width
       @win.Height = height if height
       @wcontext = WidgetContext.new(WindowWrapper.new(@win))
+      wrappanel = System::Windows::Controls::WrapPanel.new
+      @wcontext.add_widget(wrappanel)
+      @wcontext.push(PanelWrapper.new(wrappanel))
     end
     public  
     def runloop
@@ -92,12 +95,21 @@ module Shoes
       timer.Start()
     end
 
-    def stack(&block)
-      panel = System::Windows::Controls::StackPanel.new
-      @wcontext.push(PanelWrapper.new(panel))
+    def with_ctx(obj, wrapper, &block)
+      @wcontext.push(wrapper)
       instance_eval(&block)
       @wcontext.pop
-      @wcontext.add_widget(panel)
+      @wcontext.add_widget(obj)
+    end
+    def with_panel(obj, &block)
+      with_ctx(obj, PanelWrapper.new(obj), &block)
+    end
+    def stack(&block)
+      panel = System::Windows::Controls::StackPanel.new
+      with_panel(panel, &block)
+    end
+    def flow(&block)
+      with_panel(System::Windows::Controls::WrapPanel.new, &block)
     end
 
     def image(uri)
