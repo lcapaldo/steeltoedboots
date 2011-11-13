@@ -53,6 +53,20 @@ module Shoes
       @p.Children.Add(w)
     end
   end
+
+  class TextBoxWrapper
+    def initialize(editbox)
+      @box = editbox
+    end
+    public
+    def text
+      @box.Text
+    end
+    def text=(v)
+      @box.Text = v
+    end
+  end
+
       
   class Instance
     def initialize(props)
@@ -118,6 +132,11 @@ module Shoes
       img.Source = bimg
 
       @wcontext.add_widget(img)
+    end
+    def edit_line
+      box = System::Windows::Controls::TextBox.new
+      @wcontext.add_widget(box)
+      TextBoxWrapper.new(box)
     end
   end
 def self.app(props = {}, &block)
